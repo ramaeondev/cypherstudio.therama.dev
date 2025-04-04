@@ -3,14 +3,19 @@ import React, { useState, useEffect } from 'react';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
+import Settings from '@/components/layout/Settings';
 import AESTool from '@/components/tools/AESTool';
 import Base64Tool from '@/components/tools/Base64Tool';
 import HashingTool from '@/components/tools/HashingTool';
+import RSATool from '@/components/tools/RSATool';
+import URLTool from '@/components/tools/URLTool';
+import MD5Tool from '@/components/tools/MD5Tool';
 
 const Index: React.FC = () => {
   const [activeTool, setActiveTool] = useState('aes');
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   // Set sidebar open by default on desktop
@@ -21,6 +26,8 @@ const Index: React.FC = () => {
   // Toggle dark/light mode
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
+    localStorage.setItem('dark-mode', String(!isDarkMode));
+    
     if (isDarkMode) {
       document.documentElement.classList.remove('dark');
       document.documentElement.classList.add('light');
@@ -34,10 +41,45 @@ const Index: React.FC = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+  
+  // Toggle settings panel
+  const toggleSettings = () => {
+    setIsSettingsOpen(!isSettingsOpen);
+  };
 
-  // Set dark mode by default
+  // Set dark mode from localStorage or default
   useEffect(() => {
-    document.documentElement.classList.add('dark');
+    const storedDarkMode = localStorage.getItem('dark-mode');
+    if (storedDarkMode !== null) {
+      const isDark = storedDarkMode === 'true';
+      setIsDarkMode(isDark);
+      
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      }
+    } else {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+  
+  // Initialize analytics if enabled
+  useEffect(() => {
+    if (localStorage.getItem('analytics-enabled') === 'true') {
+      // This is a placeholder for actual analytics initialization
+      // In a real app, you'd set up Google Analytics or similar
+      window.gtag = function(...args) {
+        console.log('Analytics:', ...args);
+      };
+      
+      // Track page view
+      window.gtag('event', 'page_view', {
+        page_title: 'Cyber Studio',
+        page_location: window.location.href,
+      });
+    }
   }, []);
 
   // Render the active tool
@@ -45,11 +87,16 @@ const Index: React.FC = () => {
     switch (activeTool) {
       case 'aes':
         return <AESTool />;
+      case 'rsa':
+        return <RSATool />;
       case 'base64':
         return <Base64Tool />;
+      case 'url':
+        return <URLTool />;
       case 'sha':
-      case 'md5':
         return <HashingTool />;
+      case 'md5':
+        return <MD5Tool />;
       default:
         return (
           <div className="flex flex-col items-center justify-center h-full p-8">
@@ -75,6 +122,7 @@ const Index: React.FC = () => {
           isOpen={isSidebarOpen} 
           activeTool={activeTool}
           setActiveTool={setActiveTool}
+          openSettings={toggleSettings}
         />
         
         <main className="flex-1 overflow-auto p-4 md:p-6 cybergrid">
@@ -83,6 +131,13 @@ const Index: React.FC = () => {
           </div>
         </main>
       </div>
+      
+      <Settings 
+        isOpen={isSettingsOpen} 
+        onClose={toggleSettings}
+        isDarkMode={isDarkMode}
+        toggleDarkMode={toggleDarkMode}
+      />
     </div>
   );
 };

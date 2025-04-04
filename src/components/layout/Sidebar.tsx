@@ -12,13 +12,15 @@ import {
   FileKey,
   Keyboard,
   FileArchive,
-  Settings
+  Settings,
+  Link
 } from 'lucide-react';
 
 interface SidebarProps {
   isOpen: boolean;
   activeTool: string;
   setActiveTool: (tool: string) => void;
+  openSettings: () => void;
 }
 
 type ToolCategory = {
@@ -31,7 +33,7 @@ type ToolCategory = {
   }[];
 };
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, activeTool, setActiveTool }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, activeTool, setActiveTool, openSettings }) => {
   const toolCategories: ToolCategory[] = [
     {
       name: "Encryption & Decryption",
@@ -62,7 +64,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, activeTool, setActiveTool }) 
         { 
           id: "url", 
           name: "URL", 
-          icon: <Code className="h-4 w-4" />, 
+          icon: <Link className="h-4 w-4" />, 
           description: "URL Encoding/Decoding" 
         },
       ]
@@ -85,6 +87,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, activeTool, setActiveTool }) 
       ]
     }
   ];
+
+  const handleToolSelect = (toolId: string) => {
+    setActiveTool(toolId);
+    
+    // Track tool selection for analytics
+    if (window.gtag) {
+      window.gtag('event', 'tool_selected', {
+        'tool_name': toolId
+      });
+    }
+  };
 
   return (
     <div 
@@ -114,7 +127,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, activeTool, setActiveTool }) 
                     className={`w-full justify-start text-left ${
                       activeTool === tool.id ? "" : "hover:bg-secondary/50"
                     }`}
-                    onClick={() => setActiveTool(tool.id)}
+                    onClick={() => handleToolSelect(tool.id)}
                   >
                     <span className="mr-2">{tool.icon}</span>
                     {tool.name}
@@ -126,7 +139,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, activeTool, setActiveTool }) 
         </div>
         
         <div className="pt-4 border-t border-border">
-          <Button variant="ghost" className="w-full justify-start">
+          <Button variant="ghost" className="w-full justify-start" onClick={openSettings}>
             <Settings className="mr-2 h-4 w-4" />
             Settings
           </Button>

@@ -2,10 +2,10 @@
 import CryptoJS from 'crypto-js';
 
 // AES Encryption
-export const aesEncrypt = (text: string, key: string, mode: string = 'CBC', iv?: string) => {
+export const aesEncrypt = (text: string | CryptoJS.lib.WordArray, key: string, mode: string = 'CBC', iv?: string) => {
   try {
     const keyObj = CryptoJS.enc.Utf8.parse(key);
-    const ivObj = iv ? CryptoJS.enc.Utf8.parse(iv) : CryptoJS.lib.WordArray.random(16);
+    const ivObj = iv ? CryptoJS.enc.Hex.parse(iv) : CryptoJS.lib.WordArray.random(16);
     
     let options: CryptoJS.CipherOption = {
       iv: ivObj,

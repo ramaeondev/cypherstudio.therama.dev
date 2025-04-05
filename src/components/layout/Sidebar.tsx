@@ -85,6 +85,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, activeTool, setActiveTool, op
           description: "MD5 Message Digest" 
         },
       ]
+    },
+    {
+      name: "File Operations",
+      tools: [
+        { 
+          id: "fileEncryption", 
+          name: "File Encryption", 
+          icon: <FileKey className="h-4 w-4" />, 
+          description: "Encrypt and decrypt files" 
+        }
+      ]
     }
   ];
 

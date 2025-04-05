@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Info } from 'lucide-react';
+import { Info, Wrench } from 'lucide-react';
 
 interface ToolPanelProps {
   title: string;
@@ -26,9 +26,12 @@ const ToolPanel: React.FC<ToolPanelProps> = ({
       
       <Tabs defaultValue="tool" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="tool">Tool</TabsTrigger>
-          <TabsTrigger value="docs" disabled={!documentation}>
-            <Info className="mr-2 h-4 w-4" />
+          <TabsTrigger value="tool" className="flex items-center gap-2">
+            <Wrench className="h-4 w-4" />
+            Tool
+          </TabsTrigger>
+          <TabsTrigger value="docs" disabled={!documentation} className="flex items-center gap-2">
+            <Info className="h-4 w-4" />
             Documentation
           </TabsTrigger>
         </TabsList>

@@ -7,6 +7,7 @@ import ToolPanel from './ToolPanel';
 import InputOutput from './InputOutput';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { Info, KeyRound, Lock, Unlock } from 'lucide-react';
 
 const RSATool: React.FC = () => {
   const [mode, setMode] = useState<'encrypt' | 'decrypt' | 'generate'>('encrypt');
@@ -145,10 +146,19 @@ aAlmhrLVBnjiOlLlwanZevqHABx8FmY7bVpGlS3URonGWm2T29QreRnLjMoImHBx
     >
       <div className="space-y-6">
         <Tabs value={mode} onValueChange={(v) => setMode(v as 'encrypt' | 'decrypt' | 'generate')} className="w-full">
-          <TabsList className="grid grid-cols-3">
-            <TabsTrigger value="encrypt">Encrypt</TabsTrigger>
-            <TabsTrigger value="decrypt">Decrypt</TabsTrigger>
-            <TabsTrigger value="generate">Generate Keys</TabsTrigger>
+          <TabsList className="grid grid-cols-3 p-1">
+            <TabsTrigger value="encrypt" className="flex items-center gap-2">
+              <Lock className="h-4 w-4" />
+              <span>Encrypt</span>
+            </TabsTrigger>
+            <TabsTrigger value="decrypt" className="flex items-center gap-2">
+              <Unlock className="h-4 w-4" />
+              <span>Decrypt</span>
+            </TabsTrigger>
+            <TabsTrigger value="generate" className="flex items-center gap-2">
+              <KeyRound className="h-4 w-4" />
+              <span>Generate Keys</span>
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="encrypt" className="space-y-4">
@@ -185,9 +195,23 @@ aAlmhrLVBnjiOlLlwanZevqHABx8FmY7bVpGlS3URonGWm2T29QreRnLjMoImHBx
           </TabsContent>
         </Tabs>
         
-        <Button onClick={handleProcess} disabled={isProcessing}>
-          {isProcessing ? 'Processing...' : mode === 'generate' ? 'Generate Key Pair' : 
-            mode === 'encrypt' ? 'Encrypt' : 'Decrypt'}
+        <Button onClick={handleProcess} disabled={isProcessing} className="flex items-center gap-2">
+          {isProcessing ? 'Processing...' : mode === 'generate' ? (
+            <>
+              <KeyRound className="h-4 w-4" />
+              <span>Generate Key Pair</span>
+            </>
+          ) : mode === 'encrypt' ? (
+            <>
+              <Lock className="h-4 w-4" />
+              <span>Encrypt</span>
+            </>
+          ) : (
+            <>
+              <Unlock className="h-4 w-4" />
+              <span>Decrypt</span>
+            </>
+          )}
         </Button>
         
         {mode !== 'generate' && (

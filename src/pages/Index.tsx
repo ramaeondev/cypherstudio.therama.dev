@@ -10,6 +10,7 @@ import HashingTool from '@/components/tools/HashingTool';
 import RSATool from '@/components/tools/RSATool';
 import URLTool from '@/components/tools/URLTool';
 import MD5Tool from '@/components/tools/MD5Tool';
+import FileEncryptionTool from '@/components/tools/FileEncryptionTool';
 
 const Index: React.FC = () => {
   const [activeTool, setActiveTool] = useState('aes');
@@ -97,6 +98,8 @@ const Index: React.FC = () => {
         return <HashingTool />;
       case 'md5':
         return <MD5Tool />;
+      case 'fileEncryption':
+        return <FileEncryptionTool />;
       default:
         return (
           <div className="flex flex-col items-center justify-center h-full p-8">

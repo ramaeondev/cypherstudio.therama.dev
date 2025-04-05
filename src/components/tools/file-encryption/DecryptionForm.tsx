@@ -6,26 +6,31 @@ import { Label } from '@/components/ui/label';
 import FileDropzone from '@/components/ui/FileDropzone';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from "@/hooks/use-toast";
-import { decryptFile, downloadFile } from '@/utils/fileOperations';
+import { decryptFile, downloadFile, getFileExtension } from '@/utils/fileOperations';
 import { FileText } from 'lucide-react';
 
 interface DecryptionFormProps {
   iv: string;
   setIv: (iv: string) => void;
+  metadata: string;
+  setMetadata: (metadata: string) => void;
 }
 
-const DecryptionForm: React.FC<DecryptionFormProps> = ({ iv, setIv }) => {
+const DecryptionForm: React.FC<DecryptionFormProps> = ({ 
+  iv, 
+  setIv, 
+  metadata, 
+  setMetadata 
+}) => {
   const [file, setFile] = useState<File | null>(null);
   const [password, setPassword] = useState('');
   const [encryptionMode, setEncryptionMode] = useState('CBC');
-  const [originalFileType, setOriginalFileType] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedFileName, setProcessedFileName] = useState('');
   const { toast } = useToast();
 
   const handleFileUpload = (uploadedFile: File) => {
     setFile(uploadedFile);
-    setOriginalFileType(uploadedFile.type || 'application/octet-stream');
     
     // Generate a processed file name
     const fileName = uploadedFile.name;
@@ -64,8 +69,22 @@ const DecryptionForm: React.FC<DecryptionFormProps> = ({ iv, setIv }) => {
     setIsProcessing(true);
     
     try {
-      const decrypted = await decryptFile(file, password, iv, encryptionMode, originalFileType);
-      downloadFile(decrypted, processedFileName);
+      const decrypted = await decryptFile(file, password, iv, encryptionMode, metadata);
+      
+      // If we have metadata, extract the original extension
+      let finalFileName = processedFileName;
+      if (metadata) {
+        try {
+          const decodedMetadata = JSON.parse(atob(metadata));
+          if (decodedMetadata.ext && !finalFileName.endsWith(`.${decodedMetadata.ext}`)) {
+            finalFileName = `${finalFileName}.${decodedMetadata.ext}`;
+          }
+        } catch (e) {
+          console.warn('Failed to parse file metadata for filename extension');
+        }
+      }
+      
+      downloadFile(decrypted, finalFileName);
       
       toast({
         title: "File decrypted successfully",
@@ -115,6 +134,19 @@ const DecryptionForm: React.FC<DecryptionFormProps> = ({ iv, setIv }) => {
         />
         <p className="text-xs text-muted-foreground">
           The IV is a unique value generated during encryption and required for decryption.
+        </p>
+      </div>
+      
+      <div className="space-y-2">
+        <Label htmlFor="metadata">File Metadata (optional)</Label>
+        <Input 
+          id="metadata"
+          value={metadata}
+          onChange={(e) => setMetadata(e.target.value)}
+          placeholder="Enter the metadata provided during encryption"
+        />
+        <p className="text-xs text-muted-foreground">
+          Metadata contains information about the original file type and extension.
         </p>
       </div>
       

@@ -94,18 +94,34 @@ export const downloadFile = (data: Blob | string, filename: string): void => {
   }, 0);
 };
 
+// Extract file extension from a filename
+export const getFileExtension = (filename: string): string => {
+  return filename.includes('.') ? filename.split('.').pop() || '' : '';
+};
+
 // File encryption using AES
 export const encryptFile = async (
   file: File,
   password: string,
   mode: string = 'CBC'
-): Promise<{ encrypted: Blob; iv: string }> => {
+): Promise<{ encrypted: Blob; iv: string; metadata: string }> => {
   try {
     // Read file as array buffer
     const arrayBuffer = await readFileAsArrayBuffer(file);
     
     // Convert array buffer to word array for CryptoJS
     const wordArray = arrayBufferToWordArray(arrayBuffer);
+    
+    // Store the original file extension and mimetype
+    const fileExtension = getFileExtension(file.name);
+    const fileMimeType = file.type;
+    const metadata = JSON.stringify({
+      ext: fileExtension,
+      type: fileMimeType
+    });
+    
+    // Base64 encode the metadata for storage
+    const encodedMetadata = btoa(metadata);
     
     // Encrypt the file content
     const result = aesEncrypt(wordArray.toString(CryptoJS.enc.Base64), password, mode);
@@ -119,7 +135,8 @@ export const encryptFile = async (
     
     return {
       encrypted: encryptedBlob,
-      iv: result.iv
+      iv: result.iv,
+      metadata: encodedMetadata
     };
   } catch (error) {
     console.error('File encryption error:', error);
@@ -133,7 +150,7 @@ export const decryptFile = async (
   password: string,
   iv: string,
   mode: string = 'CBC',
-  originalType: string = 'application/octet-stream'
+  metadata?: string
 ): Promise<Blob> => {
   try {
     // Read encrypted file as text
@@ -146,6 +163,20 @@ export const decryptFile = async (
       throw new Error(result.error || 'Decryption failed');
     }
     
+    // Parse metadata if provided
+    let mimeType = 'application/octet-stream';
+    
+    if (metadata) {
+      try {
+        const decodedMetadata = JSON.parse(atob(metadata));
+        if (decodedMetadata.type) {
+          mimeType = decodedMetadata.type;
+        }
+      } catch (e) {
+        console.warn('Failed to parse file metadata, using default mime type');
+      }
+    }
+    
     // Convert the decrypted base64 string back to blob
     const binaryString = atob(result.plaintext);
     const bytes = new Uint8Array(binaryString.length);
@@ -154,7 +185,7 @@ export const decryptFile = async (
     }
     
     // Create a blob from the decrypted array
-    return new Blob([bytes], { type: originalType });
+    return new Blob([bytes], { type: mimeType });
   } catch (error) {
     console.error('File decryption error:', error);
     throw error;

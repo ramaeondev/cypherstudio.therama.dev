@@ -12,9 +12,10 @@ import { FileText } from 'lucide-react';
 
 interface EncryptionFormProps {
   onIvGenerated: (iv: string) => void;
+  onMetadataGenerated: (metadata: string) => void;
 }
 
-const EncryptionForm: React.FC<EncryptionFormProps> = ({ onIvGenerated }) => {
+const EncryptionForm: React.FC<EncryptionFormProps> = ({ onIvGenerated, onMetadataGenerated }) => {
   const [file, setFile] = useState<File | null>(null);
   const [password, setPassword] = useState('');
   const [encryptionMode, setEncryptionMode] = useState('CBC');
@@ -59,10 +60,11 @@ const EncryptionForm: React.FC<EncryptionFormProps> = ({ onIvGenerated }) => {
       // Show the IV to the user
       toast({
         title: "File encrypted successfully",
-        description: "Save the initialization vector (IV) to decrypt the file later",
+        description: "Save the initialization vector (IV) and file metadata to decrypt the file later",
       });
       
       onIvGenerated(result.iv);
+      onMetadataGenerated(result.metadata);
       
       // Track file encryption for analytics
       if (window.gtag) {

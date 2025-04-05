@@ -11,9 +11,14 @@ import IVDisplay from './file-encryption/IVDisplay';
 const FileEncryptionTool: React.FC = () => {
   const [mode, setMode] = useState<'encrypt' | 'decrypt'>('encrypt');
   const [iv, setIv] = useState('');
+  const [metadata, setMetadata] = useState('');
 
   const handleIvGenerated = (generatedIv: string) => {
     setIv(generatedIv);
+  };
+
+  const handleMetadataGenerated = (generatedMetadata: string) => {
+    setMetadata(generatedMetadata);
   };
 
   const documentation = <FileEncryptionDocumentation />;
@@ -38,15 +43,23 @@ const FileEncryptionTool: React.FC = () => {
           </TabsList>
           
           <TabsContent value="encrypt">
-            <EncryptionForm onIvGenerated={handleIvGenerated} />
+            <EncryptionForm 
+              onIvGenerated={handleIvGenerated} 
+              onMetadataGenerated={handleMetadataGenerated} 
+            />
           </TabsContent>
           
           <TabsContent value="decrypt">
-            <DecryptionForm iv={iv} setIv={setIv} />
+            <DecryptionForm 
+              iv={iv} 
+              setIv={setIv} 
+              metadata={metadata}
+              setMetadata={setMetadata}
+            />
           </TabsContent>
         </Tabs>
         
-        {mode === 'encrypt' && <IVDisplay iv={iv} />}
+        {mode === 'encrypt' && <IVDisplay iv={iv} metadata={metadata} />}
       </div>
     </ToolPanel>
   );

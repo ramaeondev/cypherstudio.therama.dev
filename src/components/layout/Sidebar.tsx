@@ -119,7 +119,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, activeTool, setActiveTool, op
       <div className="flex flex-col h-full p-4">
         <div className="flex justify-center mb-6 pt-2">
           <div className="flex items-center gap-2">
-            <span className="text-xl font-bold neon-glow">Cyber</span>
+            <span className="text-xl font-bold neon-glow">Cypher</span>
             <span className="text-xl font-bold accent-glow">Studio</span>
           </div>
         </div>

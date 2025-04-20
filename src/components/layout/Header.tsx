@@ -17,7 +17,7 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode, toggleSideb
           <Menu className="h-5 w-5" />
         </Button>
         <div className="flex items-center gap-2">
-          <span className="text-xl font-bold neon-glow">Cyber</span>
+          <span className="text-xl font-bold neon-glow">Cypher</span>
           <span className="text-xl font-bold accent-glow">Studio</span>
         </div>
       </div>

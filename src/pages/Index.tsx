@@ -77,7 +77,7 @@ const Index: React.FC = () => {
       
       // Track page view
       window.gtag('event', 'page_view', {
-        page_title: 'Cyber Studio',
+        page_title: 'Cypher Studio',
         page_location: window.location.href,
       });
     }
@@ -103,7 +103,7 @@ const Index: React.FC = () => {
       default:
         return (
           <div className="flex flex-col items-center justify-center h-full p-8">
-            <h2 className="text-2xl font-bold mb-4">Welcome to Cyber Studio</h2>
+            <h2 className="text-2xl font-bold mb-4">Welcome to Cypher Studio</h2>
             <p className="text-center mb-6">
               Select a tool from the sidebar to get started.
             </p>

@@ -183,7 +183,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, isDarkMode, toggle
             <h3 className="text-sm font-medium">About</h3>
             <div className="rounded-md bg-muted p-4">
               <p className="text-sm">
-                <span className="font-semibold">Cyber Studio</span> - Version 1.0.0
+                <span className="font-semibold">Cypher Studio</span> - Version 1.0.0
               </p>
               <p className="text-xs text-muted-foreground mt-1">
                 A cryptographic toolkit for developers. All processing happens locally in your browser.
